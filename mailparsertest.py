@@ -2,7 +2,8 @@ from mailparser import MailParser
 from nltk.stem.porter import *
 from nltk.corpus import stopwords
 from os import listdir
-
+from os import path
+from os import remove
 def removePunc(mail_body):
 	from string import punctuation
 	new_body = ""
@@ -40,34 +41,76 @@ def countWords(body):
 		for word in line.split():
 			count+=1
 	return count
-testpath = './beck-s/2001_plan/'
-testfile = testpath + listdir(testpath)[1]
+
+
+def getAllFiles(top_directory):
+	files = []
+	for directory in listdir(top_directory):
+		if path.isfile( str(top_directory + directory) ):
+			files.append( str(top_directory + directory) )
+		else:
+			files = files + (getAllFiles( str(top_directory + directory+"/") ))
+	return files 
+
+
+source_top_directory = './beck-s/'
+files = getAllFiles(source_top_directory)
+
+dest_top_directory = "./output/"
+
+
+
 parser = MailParser()
-parser.parse_from_file(testfile)
+success = 0
+fail = 0
+for file in files:
+	print("file to be parsed:") 
+	print(file)
+	try:
+		parser.parse_from_file(file)
+		success+=1
+	except:
+		print("file cannot be parsed")
+		output_file_path = "./PreProcessed"+file[1:]
+		try:
+			remove(output_file_path)
+		except:
+			print("already removed")	
+		fail+=1
+		continue
 
-mail_subject = str(parser.subject)
-mail_from = str(parser.from_)
-mail_body = str(parser.body)
-print(mail_body)
+	mail_subject = str(parser.subject)
+	mail_from = str(parser.from_)
+	mail_body = str(parser.body)
+	# print(mail_body)
 
 
-init_count = countWords(mail_body)
+	init_count = countWords(mail_body)
 
-mail_body = removePunc(mail_body)
-print("\n\n-----Removed Punc -----\n",mail_body)
+	mail_body = removePunc(mail_body)
+	# print("\n\n-----Removed Punc -----\n",mail_body)
 
-mail_body_words = stemWords(mail_body)
-print("\n\n-----Stemmed-----\n",mail_body_words)
+	mail_body_words = stemWords(mail_body)
+	# print("\n\n-----Stemmed-----\n",mail_body_words)
 
-mail_body_words = removeStopWords(mail_body_words)
-print("\n\n-----Removed Stop Words-----\n",mail_body_words)
+	mail_body_words = removeStopWords(mail_body_words)
+	# print("\n\n-----Removed Stop Words-----\n",mail_body_words)
 
-final_count = len(mail_body_words)
-print("\nPre-Processing Done.. Reduced words count from:",init_count,"to: ",final_count)
-of = open('./output','w')
-of.write(str(parser.from_) )
-of.write('\n\n\n')
-for word in mail_body_words:
-	of.write(str(word)+" " )
-#of.write(str(mail_body))
-of.close()
+	final_count = len(mail_body_words)
+	# print("\nPre-Processing Done.. Reduced words count from:",init_count,"to: ",final_count)
+
+
+	output_file_path = "./PreProcessed"+file[1:]
+	print("Parsing Complete")
+	print(file, "parsed to output file: ", output_file_path,"\n\n")		
+	# print(output_file_path)
+	of = open(output_file_path, 'w')
+	of.write("From: "+ str(parser.from_)+"\n")
+	of.write("Subject: "+str(mail_subject)+"\n" )
+	for word in mail_body_words:
+		of.write( str(word) + " " )
+	# of.write(str(mail_body))
+	of.close()
+
+print("Parsed: ",success)
+print("Failed: ",fail)
