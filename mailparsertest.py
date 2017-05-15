@@ -4,6 +4,7 @@ from nltk.corpus import stopwords
 from os import listdir
 from os import path
 from os import remove
+from os import makedirs
 def removePunc(mail_body):
 	from string import punctuation
 	new_body = ""
@@ -57,18 +58,37 @@ source_top_directory = './beck-s/'
 files = getAllFiles(source_top_directory)
 
 dest_top_directory = "./output/"
+dest_directory = dest_top_directory+source_top_directory[1:]
 
+
+try:
+    makedirs(dest_top_directory)
+    print("Output top directory check: Created")
+except:
+	print("Output top directory check: Exists")
+try:
+    makedirs(dest_directory)
+    print("Output inner directory check: Created")
+except :
+    print("Output inner directory check: Exists")
+from time import sleep
+
+delay_time = 5
+print("Parsing will start in",delay_time, "seconds")
+sleep(delay_time)
 
 
 parser = MailParser()
 success = 0
 fail = 0
+i = 0
 for file in files:
 	print("file to be parsed:") 
 	print(file)
 	try:
 		parser.parse_from_file(file)
 		success+=1
+		i+=1
 	except:
 		print("file cannot be parsed")
 		output_file_path = "./PreProcessed"+file[1:]
@@ -100,12 +120,12 @@ for file in files:
 	# print("\nPre-Processing Done.. Reduced words count from:",init_count,"to: ",final_count)
 
 
-	output_file_path = "./PreProcessed"+file[1:]
+	output_file_path = dest_directory+str(i)
 	print("Parsing Complete")
 	print(file, "parsed to output file: ", output_file_path,"\n\n")		
 	# print(output_file_path)
 	of = open(output_file_path, 'w')
-	of.write("From: "+ str(parser.from_)+"\n")
+	# of.write("From: "+ str(parser.from_)+"\n")
 	of.write("Subject: "+str(mail_subject)+"\n" )
 	for word in mail_body_words:
 		of.write( str(word) + " " )
