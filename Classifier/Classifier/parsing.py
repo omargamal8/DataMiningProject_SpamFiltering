@@ -58,25 +58,16 @@ def getAllFiles(top_directory):
             files = files + (getAllFiles(str(top_directory + directory + "/")))
     return files
 
-def parse_dir(dir, is_spam=False):
-    source_top_directory = dir
+def parse_dir(source_top_directory, dest_top_directory, is_spam=False):
     files = getAllFiles(source_top_directory)
-
-    dest_top_directory = "./output/"
-    dest_directory = dest_top_directory + source_top_directory[1:]
 
     try:
         makedirs(dest_top_directory)
         print("Output top directory check: Created")
     except:
         print("Output top directory check: Exists")
-    try:
-        makedirs(dest_directory)
-        print("Output inner directory check: Created")
-    except:
-        print("Output inner directory check: Exists")
-    from time import sleep
 
+    from time import sleep
     delay_time = 5
     print("Parsing will start in", delay_time, "seconds")
     sleep(delay_time)
@@ -125,7 +116,7 @@ def parse_dir(dir, is_spam=False):
         # print("\nPre-Processing Done.. Reduced words count from:",init_count,"to: ",final_count)
 
 
-        output_file_path = dest_directory + str(i)
+        output_file_path = dest_top_directory + str(i)
         print("Parsing Complete")
         print(file, "parsed to output file: ", output_file_path, "\n\n")
         of = open(output_file_path, 'w')
