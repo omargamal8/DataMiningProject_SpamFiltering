@@ -54,7 +54,7 @@ def getAllFiles(top_directory):
 	return files 
 
 
-source_top_directory = './beck-s/'
+source_top_directory = './Data/Spam/'
 files = getAllFiles(source_top_directory)
 
 dest_top_directory = "./output/"
@@ -123,7 +123,7 @@ for file in files:
 	output_file_path = dest_directory+str(i)
 	print("Parsing Complete")
 	print(file, "parsed to output file: ", output_file_path,"\n\n")		
-	# print(output_file_path)
+	print(output_file_path)
 	of = open(output_file_path, 'w')
 	# of.write("From: "+ str(parser.from_)+"\n")
 	of.write("Subject: "+str(mail_subject)+"\n" )
