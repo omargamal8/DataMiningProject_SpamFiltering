@@ -58,7 +58,7 @@ def getAllFiles(top_directory):
             files = files + (getAllFiles(str(top_directory + directory + "/")))
     return files
 
-def parse_dir(dir):
+def parse_dir(dir, is_spam=False):
     source_top_directory = dir
     files = getAllFiles(source_top_directory)
 
@@ -129,6 +129,9 @@ def parse_dir(dir):
         print("Parsing Complete")
         print(file, "parsed to output file: ", output_file_path, "\n\n")
         of = open(output_file_path, 'w')
+        if(is_spam):
+            of.write(str(mail_from)+'\n')
+            #of.write(str(mail_from))
         for word in mail_body_words:
             try:
                 of.write(str(word) + " ")
@@ -138,4 +141,3 @@ def parse_dir(dir):
 
     print("Parsed: ", success)
     print("Failed: ", fail)
-
