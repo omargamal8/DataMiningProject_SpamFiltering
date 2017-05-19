@@ -1,0 +1,9 @@
+1- Install Anaconda 
+2- open Anaconda python 
+3- run this script 
+	import nltk
+	nltk.download()
+
+4-you can find the dataset we used in http://www2.aueb.gr/users/ion/data/enron-spam/ download it in raw form
+5-add your training data in 'training_data' folder in spam and ham
+6- run classify.py
